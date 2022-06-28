@@ -16,12 +16,12 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 
 setup(
-    name="expy-manager",
+    name="pyexp",
     version="0.0.1",
     description="Experiment manager",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pypa/sampleproject",
+    url="https://github.com/masinag/pyexp/",
     author="Gabriele Masina",
     # Classifiers help users find your project by categorizing it.
     #
@@ -54,20 +54,24 @@ setup(
     packages=find_packages(where="src"),
     python_requires=">=3.7, <4",
     install_requires=[
+        "tinydb",
     ],
-    # extras_require={  # Optional
-    #     "dev": ["check-manifest"],
-    #     "test": ["coverage"],
-    # },
+    extras_require={  # Optional
+        #     "dev": ["check-manifest"],
+        "test": [
+            "pytest",
+            # "pytest-dependency",
+        ],
+    },
     # entry_points={  # Optional
     #     "console_scripts": [
     #         "sample=sample:main",
     #     ],
     # },
     project_urls={
-        "Bug Reports": "https://github.com/pypa/sampleproject/issues",
-        "Funding": "https://donate.pypi.org",
-        "Say Thanks!": "http://saythanks.io/to/example",
-        "Source": "https://github.com/pypa/sampleproject/",
+        "Bug Reports": "https://github.com/masinag/pyexp/issues",
+        # "Funding": "https://donate.pypi.org",
+        # "Say Thanks!": "http://saythanks.io/to/example",
+        "Source": "https://github.com/masinag/pyexp/",
     },
 )
