@@ -3,7 +3,7 @@ import operator
 import os
 import shutil
 from dataclasses import dataclass, field
-from functools import reduce
+from functools import partial, reduce
 from pathlib import Path
 from typing import ClassVar, Dict, List, Set, cast
 
@@ -76,7 +76,7 @@ class Database:
         os.makedirs(campaign_dir)
         db = tinydb.TinyDB(
             os.path.join(campaign_dir, db_name),
-            storage=CachingMiddleware(JSONStorage),
+            storage=CachingMiddleware(partial(JSONStorage, indent=2)),
         )
 
         # Save the configuration in the database
@@ -102,7 +102,7 @@ class Database:
         filepath = os.path.join(campaign_dir, db_name)
 
         # Read TinyDB instance from file
-        tinydb = TinyDB(filepath, storage=CachingMiddleware(JSONStorage))
+        db = TinyDB(filepath, storage=CachingMiddleware(partial(JSONStorage, indent=2)))
 
         # # Make sure the configuration is a valid dictionary
         # if set(tinydb.table("config").get.all()[0].keys()) != {"script", "params"}:
@@ -110,7 +110,7 @@ class Database:
         #     os.remove(filepath)
         #     raise ValueError("Specified campaign directory seems corrupt")
 
-        return cls(tinydb, campaign_dir)
+        return cls(db, campaign_dir)
 
     def _result_table(self) -> Table:
         return self.db.table(self._T_RESULT)
