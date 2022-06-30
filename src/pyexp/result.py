@@ -2,9 +2,16 @@ from __future__ import annotations
 
 import copy
 from dataclasses import dataclass
-from typing import Dict, Union, cast
+from typing import TypedDict
 
-ParamsT = Dict[str, Union[int, str, float]]
+from pyexp.utils import ParamsT
+
+
+class ResultJSON(TypedDict):
+    id: str
+    time: float
+    exitcode: int
+    params: ParamsT
 
 
 @dataclass(frozen=True)
@@ -17,18 +24,15 @@ class Result:
     def __post_init__(self):
         object.__setattr__(self, "params", copy.deepcopy(self.params))
 
-    def to_json(self) -> ParamsT:
-        data = {
+    def to_json(self) -> ResultJSON:
+        data: ResultJSON = {
             "id": self.id,
             "time": self.time,
             "exitcode": self.exitcode,
+            "params": self.params,
         }
-        data.update(self.params)
         return data
 
     @classmethod
-    def from_json(cls, params: ParamsT) -> Result:
-        id = cast(str, params.pop("id"))
-        time = cast(float, params.pop("time"))
-        exitcode = cast(int, params.pop("exitcode"))
-        return cls(id, time, exitcode, params)
+    def from_json(cls, params: ResultJSON) -> Result:
+        return cls(**params)

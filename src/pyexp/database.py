@@ -5,7 +5,7 @@ import shutil
 from dataclasses import dataclass, field
 from functools import reduce
 from pathlib import Path
-from typing import ClassVar, Dict, List, Set
+from typing import ClassVar, Dict, List, Set, cast
 
 import tinydb
 from tinydb.database import TinyDB
@@ -14,7 +14,8 @@ from tinydb.queries import Query, QueryLike, where
 from tinydb.storages import JSONStorage
 from tinydb.table import Document, Table
 
-from pyexp.result import ParamsT, Result
+from pyexp.result import Result, ResultJSON
+from pyexp.utils import DefaultParamsT, ParamsT
 
 
 @dataclass
@@ -47,7 +48,7 @@ class Database:
     def new(
         cls,
         script: List[str],
-        default_params: ParamsT,
+        default_params: DefaultParamsT,
         campaign_dir: str,
         overwrite: bool,
     ):
@@ -129,7 +130,7 @@ class Database:
     def get_data_dir(self) -> str:
         return os.path.join(self.get_campaign_dir(), "data")
 
-    def get_default_params(self) -> ParamsT:
+    def get_default_params(self) -> DefaultParamsT:
         return self.get_config()[self._F_PARAMS]
 
     def _correct_structure(self, result: ParamsT) -> bool:
@@ -139,16 +140,22 @@ class Database:
     def _problem_query(problem: ParamsT) -> QueryLike:
         query = Query()
         return reduce(
-            operator.and_, map(lambda p: query[p[0]] == p[1], problem.items())
+            operator.and_, map(lambda p: query.params[p[0]] == p[1], problem.items())
         )
 
     def count_results_for(self, problem: ParamsT) -> int:
+        print(problem)
         query = self._problem_query(problem)
         return self._result_table().count(query)
 
-    def get_results_for(self, problem: ParamsT) -> List[Result]:
+    def _search_results_for(self, problem: ParamsT) -> List[ResultJSON]:
         query = self._problem_query(problem)
-        return list(map(Result.from_json, self._result_table().search(query)))
+        return list(
+            map(lambda x: cast(ResultJSON, x), self._result_table().search(query))
+        )
+
+    def get_results_for(self, problem: ParamsT) -> List[Result]:
+        return list(map(Result.from_json, self._search_results_for(problem)))
 
     def get_files_for(self, result: Result) -> Dict[str, str]:
         experiment_dir = os.path.join(self.dir, result.id)

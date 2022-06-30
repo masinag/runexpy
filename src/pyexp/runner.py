@@ -5,7 +5,8 @@ import uuid
 from abc import ABC, abstractmethod
 from typing import Generator, Iterable, List
 
-from pyexp.result import ParamsT, Result
+from pyexp.result import Result
+from pyexp.utils import ParamsT
 
 
 class Runner(ABC):

@@ -7,10 +7,9 @@ from pathlib import Path
 from typing import Dict, Generator, List, Union
 
 from pyexp.database import Database
-from pyexp.result import ParamsT, Result
+from pyexp.result import Result
 from pyexp.runner import Runner, SimpleRunner
-
-IterParamsT = Dict[str, Union[int, str, float, List[int], List[str], List[float]]]
+from pyexp.utils import DefaultParamsT, IterParamsT, ParamsT
 
 
 @dataclass
@@ -19,7 +18,7 @@ class Campaign:
 
     _script: List[str] = field(init=False)
     _campaign_dir: str = field(init=False)
-    _default_params: ParamsT = field(init=False)
+    _default_params: DefaultParamsT = field(init=False)
 
     def __post_init__(self):
         self._script = self.db.get_script()
@@ -31,7 +30,7 @@ class Campaign:
         cls,
         script: Union[str, List],
         campaign_dir: str,
-        default_params: ParamsT,
+        default_params: DefaultParamsT,
         overwrite: bool = False,
     ):
         # Convert paths to be absolute
