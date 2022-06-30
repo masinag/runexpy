@@ -1,18 +1,27 @@
+from typing import List
+
+import pytest
+
 from pyexp.database import Database
-from pyexp.runner import SimpleRunner
+from pyexp.runner import ParallelRunner, SimpleRunner
+from pyexp.utils import ParamsT
 
 
-def test_simple_runner(script, default_params, campaign_dir):
+@pytest.fixture(scope="module", params=[SimpleRunner(), ParallelRunner(4)])
+def runner(request):
+    return request.param
+
+
+def test_runners(runner, script, default_params, campaign_dir):
     db = Database.new(script, default_params, campaign_dir, False)
-    param_combinations = [
+    param_combinations: List[ParamsT] = [
         {"p1": 0, "p2": 1, "p3": 2},
         {"p1": 3, "p2": 4, "p3": 5},
         {"p1": 6, "p2": 7, "p3": 8},
     ]
-    r = SimpleRunner()
     for params, result in zip(
         param_combinations,
-        r.run_simulations(script, db.get_campaign_dir(), param_combinations),
+        runner.run_simulations(script, db.get_campaign_dir(), param_combinations),
     ):
         assert result.params == params
         created_files = db.get_files_for(result)
