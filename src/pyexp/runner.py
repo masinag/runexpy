@@ -19,7 +19,7 @@ class Runner(ABC):
 
 class SimpleRunner(Runner):
     def run_simulations(
-        self, script: List[str], data_dir: str, param_combinations: List[ParamsT]
+        self, script: List[str], data_dir: str, param_combinations: Iterable[ParamsT]
     ) -> Generator[Result, None, None]:
         """Run several simulations"""
         for params in param_combinations:

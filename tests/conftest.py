@@ -4,7 +4,7 @@ from typing import Generator, List
 
 import pytest
 
-from pyexp.result import ParamsT
+from pyexp.utils import DefaultParamsT
 
 
 @pytest.fixture()
@@ -20,7 +20,7 @@ with open("out.txt", "w") as f:
 
 
 @pytest.fixture()
-def default_params() -> ParamsT:
+def default_params() -> DefaultParamsT:
     return {
         "p1": "x",
         "p2": 3,
