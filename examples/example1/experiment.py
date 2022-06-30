@@ -1,5 +1,4 @@
 import json
-import os
 
 import approx_pi
 import matplotlib.pyplot as plt
@@ -10,7 +9,7 @@ from pyexp.utils import DefaultParamsT, IterParamsT
 
 
 def main():
-    script = ["python3", os.path.abspath("approx_pi.py")]
+    script = ["python3", "approx_pi.py"]
     # script = ["python3"]-c \"print('hello')\""]
     campaign_dir = "campaigns/experiment"
     default_params: DefaultParamsT = {

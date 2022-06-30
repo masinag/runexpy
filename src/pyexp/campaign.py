@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import itertools
-import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, Generator, List, Tuple, Union
@@ -9,7 +8,7 @@ from typing import Dict, Generator, List, Tuple, Union
 from pyexp.database import Database
 from pyexp.result import Result
 from pyexp.runner import Runner, SimpleRunner
-from pyexp.utils import DefaultParamsT, IterParamsT, ParamsT
+from pyexp.utils import DefaultParamsT, IterParamsT, ParamsT, to_abs_if_path
 
 
 @dataclass
@@ -34,9 +33,11 @@ class Campaign:
         overwrite: bool = False,
     ):
         # Convert paths to be absolute
-        campaign_dir = os.path.abspath(campaign_dir)
+        campaign_dir = to_abs_if_path(campaign_dir)
         if isinstance(script, str):
             script = [script]
+
+        script = list(map(to_abs_if_path, script))
 
         # Verify if the specified campaign is already available
         if Path(campaign_dir).exists() and not overwrite:
@@ -58,7 +59,7 @@ class Campaign:
     @classmethod
     def load(cls, campaign_dir):
         # Convert paths to be absolute
-        campaign_dir = os.path.abspath(campaign_dir)
+        campaign_dir = to_abs_if_path(campaign_dir)
         # Read the existing configuration into the new DatabaseManager
         db = Database.load(campaign_dir)
         return cls(db)
@@ -107,7 +108,7 @@ class Campaign:
                 else:
                     value = param_ranges[param]
                 values_list = value if isinstance(value, list) else [value]
-                param_lists.append(values_list)
+                param_lists.append(map(to_abs_if_path, values_list))
             for param_comb in itertools.product(*param_lists):
                 yield dict(zip(self._default_params.keys(), param_comb))
         else:

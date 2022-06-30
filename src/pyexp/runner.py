@@ -1,12 +1,13 @@
 import os
 import subprocess
+import sys
 import time
 import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import partial
 from multiprocessing import Pool
-from typing import Generator, Iterable, List
+from typing import Iterable, List
 
 from pyexp.result import Result
 from pyexp.utils import ParamsT
@@ -25,6 +26,7 @@ class Runner(ABC):
         start_time = time.time()
         run_dir = os.path.join(data_dir, run_id)
         command = script + [f"--{p}={v}" for p, v in params.items()]
+        print(" ".join(command), file=sys.stderr)
         os.makedirs(run_dir)
         outfile = os.path.join(run_dir, "stdout")
         errfile = os.path.join(run_dir, "stderr")
