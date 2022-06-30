@@ -68,7 +68,7 @@ def test_get_missing_simulations_all(script, default_params, campaign_dir):
         {"p1": 4, "p2": 1, "p3": 6},
     ]
 
-    for expected, result in zip(expected_runs, c.get_missing_simulations(runs)):
+    for expected, result in zip(expected_runs, c.get_missing_experiments(runs)):
         assert expected == result
 
 
@@ -78,7 +78,7 @@ def test_missing_simulations_some(script, default_params, campaign_dir):
         "p1": 0,
         "p3": [1, 2, 3],
     }
-    c.run_missing_simulations(SimpleRunner(), runs)
+    c.run_missing_experiments(SimpleRunner(), runs)
 
     runs = {
         "p1": 4,
@@ -90,7 +90,7 @@ def test_missing_simulations_some(script, default_params, campaign_dir):
         {"p1": 4, "p2": 1, "p3": 6},
     ]
 
-    for expected, result in zip(expected_runs, c.get_missing_simulations(runs)):
+    for expected, result in zip(expected_runs, c.get_missing_experiments(runs)):
         assert expected == result
 
 
@@ -102,7 +102,7 @@ def test_missing_simulations_bad_params(script, default_params, campaign_dir):
     }
 
     with pytest.raises(ValueError):
-        for _ in c.get_missing_simulations(runs):
+        for _ in c.get_missing_experiments(runs):
             pass
 
 
@@ -115,5 +115,5 @@ def test_missing_simulations_no_non_default_params(
         "p2": [1, 2, 3],
     }
     with pytest.raises(ValueError):
-        for _ in c.get_missing_simulations(runs):
+        for _ in c.get_missing_experiments(runs):
             pass

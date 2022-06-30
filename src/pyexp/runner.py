@@ -14,13 +14,13 @@ from pyexp.utils import ParamsT
 
 class Runner(ABC):
     @abstractmethod
-    def run_simulations(
+    def run_experiments(
         self, script: List[str], dir: str, param_combinations: Iterable[ParamsT]
     ) -> Iterable[Result]:
         pass
 
     @staticmethod
-    def _run_simulation(script, data_dir, params) -> Result:
+    def _run_experiment(script, data_dir, params) -> Result:
         run_id = str(uuid.uuid4())
         start_time = time.time()
         run_dir = os.path.join(data_dir, run_id)
@@ -28,7 +28,6 @@ class Runner(ABC):
         os.makedirs(run_dir)
         outfile = os.path.join(run_dir, "stdout")
         errfile = os.path.join(run_dir, "stderr")
-        print("Run dir: ", os.path.abspath(run_dir))
         with open(outfile, "w") as stdout, open(errfile, "w") as stderr:
             subprocess.call(
                 command,
@@ -44,23 +43,23 @@ class Runner(ABC):
 
 
 class SimpleRunner(Runner):
-    def run_simulations(
+    def run_experiments(
         self, script: List[str], data_dir: str, param_combinations: Iterable[ParamsT]
     ) -> Iterable:
         """Run several simulations"""
         for params in param_combinations:
-            yield self._run_simulation(script, data_dir, params)
+            yield self._run_experiment(script, data_dir, params)
 
 
 @dataclass
 class ParallelRunner(Runner):
     max_processes: int
 
-    def run_simulations(
+    def run_experiments(
         self, script: List[str], data_dir: str, param_combinations: Iterable[ParamsT]
     ) -> Iterable[Result]:
         """Run several simulations in parallel"""
-        sim_fn = partial(self._run_simulation, script, data_dir)
+        sim_fn = partial(self._run_experiment, script, data_dir)
         with Pool(self.max_processes) as p:
             results = list(p.map(sim_fn, param_combinations))
         return results

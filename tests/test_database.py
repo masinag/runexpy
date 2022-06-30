@@ -91,7 +91,7 @@ def test_retrieve_files(script, default_params, campaign_dir):
     params = default_params
     result = Result("exp_1", 0.01, 0, params)
     # simulate the directory creation done by the runner
-    run_dir = os.path.join(campaign_dir, result.id)
+    run_dir = os.path.join(db.get_data_dir(), result.id)
     os.makedirs(run_dir)
 
     # check result with no files gets empty set of files

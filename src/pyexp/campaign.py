@@ -4,7 +4,7 @@ import itertools
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, Generator, List, Union
+from typing import Dict, Generator, List, Tuple, Union
 
 from pyexp.database import Database
 from pyexp.result import Result
@@ -63,17 +63,17 @@ class Campaign:
         db = Database.load(campaign_dir)
         return cls(db)
 
-    def run_missing_simulations(
+    def run_missing_experiments(
         self, runner: Runner, param_combinations: Union[IterParamsT, List[IterParamsT]]
     ) -> None:
-        missing_simulations = self.get_missing_simulations(param_combinations)
+        missing_experiments = self.get_missing_experiments(param_combinations)
         script = self._script
-        for result in runner.run_simulations(
-            script, self.db.get_data_dir(), missing_simulations
+        for result in runner.run_experiments(
+            script, self.db.get_data_dir(), missing_experiments
         ):
             self.write_result(result)
 
-    def get_missing_simulations(
+    def get_missing_experiments(
         self, param_combinations: Union[IterParamsT, List[IterParamsT]]
     ) -> Generator[ParamsT, None, None]:
         for comb in self.list_param_combinations(param_combinations):
@@ -82,6 +82,14 @@ class Campaign:
 
     def write_result(self, result: Result) -> None:
         self.db.insert_result(result)
+
+    def get_results_for(
+        self, param_combinations: Union[IterParamsT, List[IterParamsT]]
+    ) -> List[Tuple[Result, Dict[str, str]]]:
+        combs = self.list_param_combinations(param_combinations)
+        results = itertools.chain.from_iterable(map(self.db.get_results_for, combs))
+
+        return [(res, self.db.get_files_for(res)) for res in results]
 
     def list_param_combinations(self, param_ranges: Dict | list):
         if isinstance(param_ranges, dict):
@@ -110,4 +118,4 @@ class Campaign:
 def main():
     campaign = Campaign.new("simulate", "./campaigns/", {"k": None, "q": None})
     param_combinations = {}
-    campaign.run_missing_simulations(SimpleRunner(), param_combinations)
+    campaign.run_missing_experiments(SimpleRunner(), param_combinations)

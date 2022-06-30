@@ -144,7 +144,6 @@ class Database:
         )
 
     def count_results_for(self, problem: ParamsT) -> int:
-        print(problem)
         query = self._problem_query(problem)
         return self._result_table().count(query)
 
@@ -158,7 +157,7 @@ class Database:
         return list(map(Result.from_json, self._search_results_for(problem)))
 
     def get_files_for(self, result: Result) -> Dict[str, str]:
-        experiment_dir = os.path.join(self.dir, result.id)
+        experiment_dir = os.path.join(self.get_data_dir(), result.id)
         return {f: os.path.join(experiment_dir, f) for f in os.listdir(experiment_dir)}
 
     def insert_result(self, result: Result) -> None:

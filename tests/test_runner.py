@@ -21,7 +21,7 @@ def test_runners(runner, script, default_params, campaign_dir):
     ]
     for params, result in zip(
         param_combinations,
-        runner.run_simulations(script, db.get_campaign_dir(), param_combinations),
+        runner.run_experiments(script, db.get_data_dir(), param_combinations),
     ):
         assert result.params == params
         created_files = db.get_files_for(result)

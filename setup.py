@@ -62,6 +62,11 @@ setup(
             "pytest",
             # "pytest-dependency",
         ],
+        "example": [
+            "numpy",
+            "matplotlib",
+            # "pytest-dependency",
+        ],
     },
     # entry_points={  # Optional
     #     "console_scripts": [
