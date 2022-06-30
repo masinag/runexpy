@@ -4,36 +4,40 @@ import itertools
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, Generator
+from typing import Dict, Generator, List, Union
 
 from pyexp.database import Database
 from pyexp.result import ParamsT, Result
 from pyexp.runner import Runner, SimpleRunner
 
+IterParamsT = Dict[str, Union[int, str, float, List[int], List[str], List[float]]]
+
 
 @dataclass
 class Campaign:
-    db: Database
+    db: Database = field(compare=False)
 
-    _script: str = field(init=False)
-    _dir: str = field(init=False)
+    _script: List[str] = field(init=False)
+    _campaign_dir: str = field(init=False)
     _default_params: ParamsT = field(init=False)
 
     def __post_init__(self):
         self._script = self.db.get_script()
-        self._dir = self.db.get_campaign_dir()
+        self._campaign_dir = self.db.get_campaign_dir()
         self._default_params = self.db.get_default_params()
 
     @classmethod
     def new(
         cls,
-        script: str,
+        script: Union[str, List],
         campaign_dir: str,
         default_params: ParamsT,
         overwrite: bool = False,
     ):
         # Convert paths to be absolute
         campaign_dir = os.path.abspath(campaign_dir)
+        if isinstance(script, str):
+            script = [script]
 
         # Verify if the specified campaign is already available
         if Path(campaign_dir).exists() and not overwrite:
@@ -61,16 +65,17 @@ class Campaign:
         return cls(db)
 
     def run_missing_simulations(
-        self, runner: Runner, param_combinations: ParamsT
+        self, runner: Runner, param_combinations: Union[IterParamsT, List[IterParamsT]]
     ) -> None:
         missing_simulations = self.get_missing_simulations(param_combinations)
         script = self._script
-        dir = self._dir
-        for result in runner.run_simulations(script, dir, missing_simulations):
+        for result in runner.run_simulations(
+            script, self.db.get_data_dir(), missing_simulations
+        ):
             self.write_result(result)
 
     def get_missing_simulations(
-        self, param_combinations: ParamsT
+        self, param_combinations: Union[IterParamsT, List[IterParamsT]]
     ) -> Generator[ParamsT, None, None]:
         for comb in self.list_param_combinations(param_combinations):
             if not self.db.count_results_for(comb):
@@ -82,6 +87,11 @@ class Campaign:
     def list_param_combinations(self, param_ranges: Dict | list):
         if isinstance(param_ranges, dict):
             param_lists = []
+            if not set(param_ranges.keys()).issubset(self._default_params.keys()):
+                raise ValueError(
+                    "Unknown parameters: "
+                    f"{set(param_ranges.keys()) - self._default_params.keys()}"
+                )
             for param, default in self._default_params.items():
                 if param not in param_ranges:
                     if default is None:

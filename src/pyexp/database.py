@@ -1,10 +1,11 @@
+import copy
 import operator
 import os
 import shutil
 from dataclasses import dataclass, field
 from functools import reduce
 from pathlib import Path
-from typing import ClassVar, List, Set
+from typing import ClassVar, Dict, List, Set
 
 import tinydb
 from tinydb.database import TinyDB
@@ -44,7 +45,11 @@ class Database:
 
     @classmethod
     def new(
-        cls, script: str, default_params: ParamsT, campaign_dir: str, overwrite: bool
+        cls,
+        script: List[str],
+        default_params: ParamsT,
+        campaign_dir: str,
+        overwrite: bool,
     ):
         # Make sure the directory does not exist already
         if Path(campaign_dir).exists() and not overwrite:
@@ -75,9 +80,9 @@ class Database:
 
         # Save the configuration in the database
         config = {
-            cls._F_SCRIPT: script,
+            cls._F_SCRIPT: copy.deepcopy(script),
             cls._F_CMPDIR: campaign_dir,
-            cls._F_PARAMS: default_params,
+            cls._F_PARAMS: copy.deepcopy(default_params),
         }
 
         db.table("config").insert(config)
@@ -115,11 +120,14 @@ class Database:
     def get_config(self) -> Document:
         return self._config_table().all()[0]
 
-    def get_script(self) -> str:
+    def get_script(self) -> List[str]:
         return self.get_config()[self._F_SCRIPT]
 
     def get_campaign_dir(self) -> str:
         return self.get_config()[self._F_CMPDIR]
+
+    def get_data_dir(self) -> str:
+        return os.path.join(self.get_campaign_dir(), "data")
 
     def get_default_params(self) -> ParamsT:
         return self.get_config()[self._F_PARAMS]
@@ -141,6 +149,10 @@ class Database:
     def get_results_for(self, problem: ParamsT) -> List[Result]:
         query = self._problem_query(problem)
         return list(map(Result.from_json, self._result_table().search(query)))
+
+    def get_files_for(self, result: Result) -> Dict[str, str]:
+        experiment_dir = os.path.join(self.dir, result.id)
+        return {f: os.path.join(experiment_dir, f) for f in os.listdir(experiment_dir)}
 
     def insert_result(self, result: Result) -> None:
         if not self._correct_structure(result.params):

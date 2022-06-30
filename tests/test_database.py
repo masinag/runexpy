@@ -1,34 +1,12 @@
 import os
-import tempfile
-from typing import Generator
 
 import pytest
 
 from pyexp.database import Database
-from pyexp.result import ParamsT, Result
+from pyexp.result import Result
 
 
-@pytest.fixture()
-def script() -> str:
-    return "script"
-
-
-@pytest.fixture()
-def default_params() -> ParamsT:
-    return {
-        "p1": "x",
-        "p2": 3,
-        "p3": None,
-    }
-
-
-@pytest.fixture()
-def campaign_dir() -> Generator[str, None, None]:
-    with tempfile.TemporaryDirectory() as tempdir:
-        yield os.path.join(tempdir, "temp_exp")
-
-
-def test_new_db(script: str, default_params, campaign_dir):
+def test_new_db(script, default_params, campaign_dir):
     db = Database.new(script, default_params, campaign_dir, False)
     assert db.get_script() == script
     assert db.get_campaign_dir() == campaign_dir
@@ -97,7 +75,7 @@ def test_insert_bad_result2(script, default_params, campaign_dir):
         db.insert_result(result)
 
 
-def test_retrieve_result(script, default_params, campaign_dir):
+def test_retrieve_results(script, default_params, campaign_dir):
     db = Database.new(script, default_params, campaign_dir, False)
     params = default_params
     result1 = Result("exp_1", 0.01, 0, params)
@@ -106,3 +84,32 @@ def test_retrieve_result(script, default_params, campaign_dir):
     db.insert_result(result2)
     entries = db.get_results_for(params)
     assert entries == [result1, result2]
+
+
+def test_retrieve_files(script, default_params, campaign_dir):
+    db = Database.new(script, default_params, campaign_dir, False)
+    params = default_params
+    result = Result("exp_1", 0.01, 0, params)
+    # simulate the directory creation done by the runner
+    run_dir = os.path.join(campaign_dir, result.id)
+    os.makedirs(run_dir)
+
+    # check result with no files gets empty set of files
+    db.insert_result(result)
+    assert db.get_files_for(result) == {}
+
+    # write some files for this result
+    check_str = "Control string"
+    filenames = ["stderr", "stdout", "output.txt"]
+    for filename in filenames:
+        with open(os.path.join(run_dir, filename), "w") as f:
+            content = f"{filename}\n{check_str}\n"
+            f.write(content)
+
+    # check they are retrieved correctly from the db
+    result_files = db.get_files_for(result)
+    assert len(result_files)
+    for filename, filepath in result_files.items():
+        with open(filepath) as f:
+            expected_content = f"{filename}\n{check_str}\n"
+            assert f.read() == expected_content
