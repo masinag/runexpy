@@ -31,8 +31,8 @@ class Database:
 
     # fields
     _F_SCRIPT: ClassVar[str] = "script"
-    _F_CMPDIR: ClassVar[str] = "cmpdir"
-    _F_PARAMS: ClassVar[str] = "params"
+    _F_CMPDIR: ClassVar[str] = "campaign_dir"
+    _F_PARAMS: ClassVar[str] = "default_params"
     # tables
     _T_CONFIG: ClassVar[str] = "config"
     _T_RESULT: ClassVar[str] = "result"
