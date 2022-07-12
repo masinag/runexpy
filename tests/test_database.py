@@ -2,8 +2,8 @@ import os
 
 import pytest
 
-from pyexp.database import Database
-from pyexp.result import Result
+from runexpy.database import Database
+from runexpy.result import Result
 
 
 def test_new_db(script, default_params, campaign_dir):

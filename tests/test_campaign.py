@@ -1,7 +1,7 @@
 import pytest
 
-from pyexp.campaign import Campaign
-from pyexp.runner import SimpleRunner
+from runexpy.campaign import Campaign
+from runexpy.runner import SimpleRunner
 
 
 def test_new_campaign(script, default_params, campaign_dir):

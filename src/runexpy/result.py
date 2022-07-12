@@ -4,7 +4,7 @@ import copy
 from dataclasses import dataclass
 from typing import TypedDict
 
-from pyexp.utils import ParamsT
+from runexpy.utils import ParamsT
 
 
 class ResultJSON(TypedDict):

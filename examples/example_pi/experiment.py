@@ -4,10 +4,10 @@ from typing import Dict, List, Tuple
 from approx_pi import OUT_FILE, DEFAULT_N
 import matplotlib.pyplot as plt
 
-from pyexp.campaign import Campaign
-from pyexp.result import Result
-from pyexp.runner import ParallelRunner, SimpleRunner
-from pyexp.utils import DefaultParamsT, IterParamsT
+from runexpy.campaign import Campaign
+from runexpy.result import Result
+from runexpy.runner import ParallelRunner, SimpleRunner
+from runexpy.utils import DefaultParamsT, IterParamsT
 
 
 def print_results(results: List[Tuple[Result, Dict[str, str]]]) -> None:

@@ -16,12 +16,12 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 
 setup(
-    name="pyexp",
+    name="runexpy",
     version="0.0.1",
     description="Experiment manager",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/masinag/pyexp/",
+    url="https://github.com/masinag/runexpy/",
     author="Gabriele Masina",
     # Classifiers help users find your project by categorizing it.
     #
@@ -74,9 +74,9 @@ setup(
     #     ],
     # },
     project_urls={
-        "Bug Reports": "https://github.com/masinag/pyexp/issues",
+        "Bug Reports": "https://github.com/masinag/runexpy/issues",
         # "Funding": "https://donate.pypi.org",
         # "Say Thanks!": "http://saythanks.io/to/example",
-        "Source": "https://github.com/masinag/pyexp/",
+        "Source": "https://github.com/masinag/runexpy/",
     },
 )

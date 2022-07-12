@@ -14,8 +14,8 @@ from tinydb.queries import Query, QueryLike, where
 from tinydb.storages import JSONStorage
 from tinydb.table import Document, Table
 
-from pyexp.result import Result, ResultJSON
-from pyexp.utils import DefaultParamsT, ParamsT
+from runexpy.result import Result, ResultJSON
+from runexpy.utils import DefaultParamsT, ParamsT
 
 
 @dataclass

@@ -1,4 +1,4 @@
-# pyexp - Experiment manager
+# runexpy - Experiment manager
 Python library to perform multiple executions of a script with different parameters,
 manage the results and collect them.
 
@@ -40,8 +40,8 @@ Write a Python script that defines the experiments you want to run.
 
 Example, e.g. experiment.py
 ```python
-from pyexp.campaign import Campaign
-from pyexp.runner import SimpleRunner
+from runexpy.campaign import Campaign
+from runexpy.runner import SimpleRunner
 
 
 def main():
@@ -96,6 +96,6 @@ if __name__ == "__main__":
 ```
 
 ### Run your experiments
-By running your `experiment.py`, pyexp will create a directory containing all your experiments
+By running your `experiment.py`, runexpy will create a directory containing all your experiments
 with the corresponding results and files produced. A database is kept to store all the informations
 and allow for an easy retrival of the outputs.

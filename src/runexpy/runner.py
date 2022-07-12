@@ -9,8 +9,8 @@ from functools import partial
 from multiprocessing import Pool
 from typing import Iterable, List
 
-from pyexp.result import Result
-from pyexp.utils import ParamsT
+from runexpy.result import Result
+from runexpy.utils import ParamsT
 
 
 class Runner(ABC):

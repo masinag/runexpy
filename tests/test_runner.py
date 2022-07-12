@@ -2,9 +2,9 @@ from typing import List
 
 import pytest
 
-from pyexp.database import Database
-from pyexp.runner import ParallelRunner, SimpleRunner
-from pyexp.utils import ParamsT
+from runexpy.database import Database
+from runexpy.runner import ParallelRunner, SimpleRunner
+from runexpy.utils import ParamsT
 
 
 @pytest.fixture(scope="module", params=[SimpleRunner(), ParallelRunner(4)])

@@ -4,7 +4,7 @@ from typing import Generator, List
 
 import pytest
 
-from pyexp.utils import DefaultParamsT
+from runexpy.utils import DefaultParamsT
 
 
 @pytest.fixture()

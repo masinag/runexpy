@@ -5,10 +5,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, Generator, List, Tuple, Union
 
-from pyexp.database import Database
-from pyexp.result import Result
-from pyexp.runner import Runner, SimpleRunner
-from pyexp.utils import DefaultParamsT, IterParamsT, ParamsT, to_abs_if_path
+from runexpy.database import Database
+from runexpy.result import Result
+from runexpy.runner import Runner, SimpleRunner
+from runexpy.utils import DefaultParamsT, IterParamsT, ParamsT, to_abs_if_path
 
 
 @dataclass
