@@ -40,5 +40,6 @@ jobs:
       run: |
         pytest
     - name: Run examples
+      working-directory: ./examples/example_pi
       run: |
-        python3 examples/example_pi/experiment.py
+        python3 experiment.py
