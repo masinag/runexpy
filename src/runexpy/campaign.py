@@ -101,7 +101,7 @@ class Campaign:
                     f"{set(param_ranges.keys()) - self._default_params.keys()}"
                 )
             for param, default in self._default_params.items():
-                if param not in param_ranges:
+                if param_ranges.get(param) is None:
                     if default is None:
                         raise ValueError(f"Non-default field {param} has not been set")
                     value = default
