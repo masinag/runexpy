@@ -1,6 +1,78 @@
 [build-system]
-requires = ["setuptools>=43.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "runexpy"
+description = 'Python experiment manager'
+readme = "README.md"
+requires-python = ">=3.7"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "Gabriele Masina", email = "gabriele.masina@virgilio.it" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = ["tinydb"]
+dynamic = ["version"]
+
+[project.urls]
+Documentation = "https://github.com/masinag/runexpy#readme"
+Issues = "https://github.com/masinag/runexpy/issues"
+Source = "https://github.com/masinag/runexpy"
+
+[tool.hatch.version]
+path = "src/runexpy/__about__.py"
+
+# [tool.hatch.envs.default]
+# dependencies = [
+#   "tinydb",
+# ]
+
+[project.optional-dependencies]
+dev = [
+  "black",
+  "flake8",
+  "isort",
+]
+test = [
+    "pytest",
+]
+example = [
+    "numpy",
+    "matplotlib",
+]
+
+[tool.hatch.envs.default.scripts]
+cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=runexpy --cov=tests"
+no-cov = "cov --no-cov"
+
+[[tool.hatch.envs.test.matrix]]
+python = ["37", "38", "39", "310", "311"]
+
+[tool.coverage.run]
+branch = true
+parallel = true
+omit = [
+  "src/runexpy/__about__.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
 
 [tool.isort]
 profile="black"
