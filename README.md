@@ -1,4 +1,4 @@
-# runexpy - Experiment manager
+# runexpy - Experiment manager ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/masinag/runexpy/Python%20package?label=build) ![PyPI](https://img.shields.io/pypi/v/runexpy)
 Python library to perform multiple executions of a script with different parameters,
 manage the results and collect them.
 
@@ -98,4 +98,4 @@ if __name__ == "__main__":
 ### Run your experiments
 By running your `experiment.py`, runexpy will create a directory containing all your experiments
 with the corresponding results and files produced. A database is kept to store all the informations
-and allow for an easy retrival of the outputs.
+and allow for an easy retrieval of the outputs.
