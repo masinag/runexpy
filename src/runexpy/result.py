@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import copy
 from dataclasses import dataclass
-from typing import TypedDict
+from typing_extensions import TypedDict
 
 from runexpy.utils import ParamsT
 
