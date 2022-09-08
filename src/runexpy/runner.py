@@ -13,11 +13,11 @@ from runexpy.result import Result
 from runexpy.utils import ParamsT
 
 
-def format_option(name: str, value: Union[int, str, bool]) -> str:
+def format_option(name: str, value: Union[int, str, bool]) -> List[str]:
     if type(value) is bool:
-        return f"--{name}" if value else ""
+        return [f"--{name}"] if value else []
     else:
-        return f"--{name}={value}"
+        return [f"--{name}", f"{value}"]
 
 
 class Runner(ABC):
@@ -32,7 +32,7 @@ class Runner(ABC):
         run_id = str(uuid.uuid4())
         start_time = time.time()
         run_dir = os.path.join(data_dir, run_id)
-        command = script + [format_option(p, v) for p, v in params.items()]
+        command = script + [i for p, v in params.items() for i in format_option(p, v)]
         print(" ".join(command), file=sys.stderr)
         os.makedirs(run_dir)
         outfile = os.path.join(run_dir, "stdout")
