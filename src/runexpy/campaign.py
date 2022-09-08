@@ -95,10 +95,18 @@ class Campaign:
     ) -> List[Tuple[Result, Dict[str, str]]]:
         combs = self.list_param_combinations(param_combinations)
         results = itertools.chain.from_iterable(map(self.db.get_results_for, combs))
-
         return [(res, self.db.get_files_for(res)) for res in results]
 
-    def list_param_combinations(self, param_ranges: Dict | list):
+    def get_all_results(
+        self,
+    ) -> List[Tuple[Result, Dict[str, str]]]:
+        results = self.db.get_results_for({})
+        return [(res, self.db.get_files_for(res)) for res in results]
+
+    def list_param_combinations(
+        self,
+        param_ranges: Union[IterParamsT, List[IterParamsT]],
+    ) -> Generator[ParamsT, None, None]:
         if isinstance(param_ranges, dict):
             param_lists = []
             if not set(param_ranges.keys()).issubset(self._default_params.keys()):

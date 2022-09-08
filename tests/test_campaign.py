@@ -117,3 +117,22 @@ def test_missing_simulations_no_non_default_params(
     with pytest.raises(ValueError):
         for _ in c.get_missing_experiments(runs):
             pass
+
+
+def test_get_results(script, default_params, campaign_dir):
+    c = Campaign.new(script, campaign_dir, default_params, False)
+    runs = [
+        {"p1": 0, "p2": default_params["p2"], "p3": 1},
+        {"p1": 0, "p2": default_params["p2"], "p3": 2},
+        {"p1": 0, "p2": default_params["p2"], "p3": 3},
+        {"p1": 4, "p2": 1, "p3": 5},
+        {"p1": 4, "p2": 1, "p3": 6},
+    ]
+    c.run_missing_experiments(SimpleRunner(), runs)
+    all_results = c.get_all_results()
+    assert len(all_results) == len(runs)
+
+    partial_results = c.get_results_for(
+        {"p1": 0, "p2": default_params["p2"], "p3": [1, 2]}
+    )
+    assert len(partial_results) == 2

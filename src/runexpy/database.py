@@ -10,7 +10,7 @@ from typing import ClassVar, Dict, List, Set, cast
 import tinydb
 from tinydb.database import TinyDB
 from tinydb.middlewares import CachingMiddleware
-from tinydb.queries import Query, QueryLike, where
+from tinydb.queries import Query, QueryInstance, where
 from tinydb.storages import JSONStorage
 from tinydb.table import Document, Table
 
@@ -137,8 +137,10 @@ class Database:
         return self._fields == set(result.keys())
 
     @staticmethod
-    def _problem_query(problem: ParamsT) -> QueryLike:
+    def _problem_query(problem: ParamsT) -> QueryInstance:
         query = Query()
+        if not problem:
+            return query.noop()
         return reduce(
             operator.and_, map(lambda p: query.params[p[0]] == p[1], problem.items())
         )
