@@ -7,10 +7,17 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import partial
 from multiprocessing import Pool
-from typing import Iterable, List
+from typing import Iterable, List, Union
 
 from runexpy.result import Result
 from runexpy.utils import ParamsT
+
+
+def format_option(name: str, value: Union[int, str, bool]) -> str:
+    if type(value) is bool:
+        return f"--{name}" if value else ""
+    else:
+        return f"{name}={value}"
 
 
 class Runner(ABC):
@@ -25,7 +32,7 @@ class Runner(ABC):
         run_id = str(uuid.uuid4())
         start_time = time.time()
         run_dir = os.path.join(data_dir, run_id)
-        command = script + [f"--{p}={v}" for p, v in params.items()]
+        command = script + [format_option(p, v) for p, v in params.items()]
         print(" ".join(command), file=sys.stderr)
         os.makedirs(run_dir)
         outfile = os.path.join(run_dir, "stdout")
