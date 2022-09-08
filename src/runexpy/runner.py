@@ -17,7 +17,7 @@ def format_option(name: str, value: Union[int, str, bool]) -> str:
     if type(value) is bool:
         return f"--{name}" if value else ""
     else:
-        return f"{name}={value}"
+        return f"--{name}={value}"
 
 
 class Runner(ABC):
