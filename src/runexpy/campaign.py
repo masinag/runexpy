@@ -65,9 +65,12 @@ class Campaign:
         return cls(db)
 
     def run_missing_experiments(
-        self, runner: Runner, param_combinations: Union[IterParamsT, List[IterParamsT]]
+        self,
+        runner: Runner,
+        param_combinations: Union[IterParamsT, List[IterParamsT]],
+        count: int = 1,
     ) -> None:
-        missing_experiments = self.get_missing_experiments(param_combinations)
+        missing_experiments = self.get_missing_experiments(param_combinations, count)
         script = self._script
         for result in runner.run_experiments(
             script, self.db.get_data_dir(), missing_experiments
@@ -75,10 +78,13 @@ class Campaign:
             self.write_result(result)
 
     def get_missing_experiments(
-        self, param_combinations: Union[IterParamsT, List[IterParamsT]]
+        self,
+        param_combinations: Union[IterParamsT, List[IterParamsT]],
+        count: int = 1,
     ) -> Generator[ParamsT, None, None]:
         for comb in self.list_param_combinations(param_combinations):
-            if not self.db.count_results_for(comb):
+            missing = max(0, count - self.db.count_results_for(comb))
+            for _ in range(missing):
                 yield comb
 
     def write_result(self, result: Result) -> None:
