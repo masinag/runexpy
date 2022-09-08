@@ -52,12 +52,15 @@ class Runner(ABC):
 
 
 class SimpleRunner(Runner):
+    delay: int = 0
+
     def run_experiments(
         self, script: List[str], data_dir: str, param_combinations: Iterable[ParamsT]
     ) -> Iterable:
         """Run several simulations"""
         for params in param_combinations:
             yield self._run_experiment(script, data_dir, params)
+            time.sleep(self.delay)
 
 
 @dataclass
