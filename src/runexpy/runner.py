@@ -51,6 +51,7 @@ class Runner(ABC):
         return Result(run_id, tot_time, return_code, params)
 
 
+@dataclass
 class SimpleRunner(Runner):
     delay: int = 0
 
