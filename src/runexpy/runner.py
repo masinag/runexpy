@@ -74,5 +74,4 @@ class ParallelRunner(Runner):
         """Run several simulations in parallel"""
         sim_fn = partial(self._run_experiment, script, data_dir)
         with Pool(self.max_processes) as p:
-            results = list(p.map(sim_fn, param_combinations))
-        return results
+            yield from p.imap_unordered(sim_fn, param_combinations)

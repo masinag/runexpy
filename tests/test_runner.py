@@ -19,11 +19,18 @@ def test_runners(runner, script, default_params, campaign_dir):
         {"p1": 3, "p2": 4, "p3": 5},
         {"p1": 6, "p2": 7, "p3": 8},
     ]
-    for params, result in zip(
-        param_combinations,
-        runner.run_experiments(script, db.get_data_dir(), param_combinations),
-    ):
-        assert result.params == params
+    results = list(
+        runner.run_experiments(script, db.get_data_dir(), param_combinations)
+    )
+    assert len(results) == len(param_combinations)
+
+    # check each param_combination has a result
+    for params in param_combinations:
+        conf_results = [result for result in results if result.params == params]
+        assert len(conf_results) == 1
+
+    # check each result has stored 3 files
+    for result in results:
         created_files = db.get_files_for(result)
         assert len(created_files) == 3
         assert "stderr" in created_files
